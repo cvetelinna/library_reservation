@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using library_reservation.Data;
 
 namespace library_reservation.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211205120040_AddHalls")]
+    partial class AddHalls
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -229,45 +231,6 @@ namespace library_reservation.Data.Migrations
                     b.ToTable("Halls");
                 });
 
-            modelBuilder.Entity("library_reservation.Models.Reservation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("HallId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ReservationRequestId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("HallId");
-
-                    b.ToTable("Reservations");
-                });
-
-            modelBuilder.Entity("library_reservation.Models.ReservationRequest", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ReservationId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ReservationId")
-                        .IsUnique();
-
-                    b.ToTable("ReservationRequests");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -317,38 +280,6 @@ namespace library_reservation.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("library_reservation.Models.Reservation", b =>
-                {
-                    b.HasOne("library_reservation.Models.Hall", "Hall")
-                        .WithMany("Reservations")
-                        .HasForeignKey("HallId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Hall");
-                });
-
-            modelBuilder.Entity("library_reservation.Models.ReservationRequest", b =>
-                {
-                    b.HasOne("library_reservation.Models.Reservation", "Reservation")
-                        .WithOne("ReservationRequest")
-                        .HasForeignKey("library_reservation.Models.ReservationRequest", "ReservationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Reservation");
-                });
-
-            modelBuilder.Entity("library_reservation.Models.Hall", b =>
-                {
-                    b.Navigation("Reservations");
-                });
-
-            modelBuilder.Entity("library_reservation.Models.Reservation", b =>
-                {
-                    b.Navigation("ReservationRequest");
                 });
 #pragma warning restore 612, 618
         }
