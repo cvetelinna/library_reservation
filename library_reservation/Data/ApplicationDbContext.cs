@@ -14,6 +14,20 @@ namespace library_reservation.Data
         {
         }
 
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<Reservation>()
+                .HasOne(r => r.ReservationRequest)
+                .WithOne(r => r.Reservation)
+                .HasForeignKey<ReservationRequest>(rr => rr.ReservationId);
+        }
+
+        public virtual DbSet<Reservation> Reservations { get; set; }
+
+        public virtual DbSet<ReservationRequest> ReservationRequests { get; set; }
+
         public virtual DbSet<Hall> Halls { get; set; }
     }
 }

@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using library_reservation.Data;
 
 namespace library_reservation.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211205124044_add-nav-property-to-reservation-request")]
+    partial class addnavpropertytoreservationrequest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -238,9 +240,6 @@ namespace library_reservation.Data.Migrations
                     b.Property<int>("HallId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ReservationRequestId")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("Id");
 
                     b.HasIndex("HallId");
@@ -262,8 +261,7 @@ namespace library_reservation.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ReservationId")
-                        .IsUnique();
+                    b.HasIndex("ReservationId");
 
                     b.ToTable("ReservationRequests");
                 });
@@ -333,8 +331,8 @@ namespace library_reservation.Data.Migrations
             modelBuilder.Entity("library_reservation.Models.ReservationRequest", b =>
                 {
                     b.HasOne("library_reservation.Models.Reservation", "Reservation")
-                        .WithOne("ReservationRequest")
-                        .HasForeignKey("library_reservation.Models.ReservationRequest", "ReservationId")
+                        .WithMany()
+                        .HasForeignKey("ReservationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -344,11 +342,6 @@ namespace library_reservation.Data.Migrations
             modelBuilder.Entity("library_reservation.Models.Hall", b =>
                 {
                     b.Navigation("Reservations");
-                });
-
-            modelBuilder.Entity("library_reservation.Models.Reservation", b =>
-                {
-                    b.Navigation("ReservationRequest");
                 });
 #pragma warning restore 612, 618
         }
