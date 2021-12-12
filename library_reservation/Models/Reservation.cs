@@ -1,4 +1,6 @@
-﻿namespace library_reservation.Models
+﻿using System;
+
+namespace library_reservation.Models
 {
     public class Reservation
     {
@@ -13,9 +15,8 @@
         public DateTime EndDate { get; set; }
 
         public string Subject { get; set; }
-        
-        public string[] Organizers { get; set; }
 
+        public string Organizers { get; set; }
         public string Description { get; set; }
         
         public bool RequiresMultimedia { get; set; }
