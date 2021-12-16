@@ -229,6 +229,32 @@ namespace library_reservation.Data.Migrations
                     b.ToTable("Halls");
                 });
 
+            modelBuilder.Entity("library_reservation.Models.RecurringSettings", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("EndCounter")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("EndType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("RecurrenceType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RecurringSettings");
+                });
+
             modelBuilder.Entity("library_reservation.Models.ReservationModel", b =>
                 {
                     b.Property<int>("Id")
@@ -246,6 +272,9 @@ namespace library_reservation.Data.Migrations
 
                     b.Property<string>("Organizers")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("ReccuringSettingsId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("RequiresMultimedia")
                         .HasColumnType("INTEGER");
