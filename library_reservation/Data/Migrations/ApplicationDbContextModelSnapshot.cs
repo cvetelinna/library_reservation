@@ -229,16 +229,34 @@ namespace library_reservation.Data.Migrations
                     b.ToTable("Halls");
                 });
 
-            modelBuilder.Entity("library_reservation.Models.Reservation", b =>
+            modelBuilder.Entity("library_reservation.Models.ReservationModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("HallId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ReservationRequestId")
+                    b.Property<string>("Organizers")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("RequiresMultimedia")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Subject")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("UserId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -246,26 +264,6 @@ namespace library_reservation.Data.Migrations
                     b.HasIndex("HallId");
 
                     b.ToTable("Reservations");
-                });
-
-            modelBuilder.Entity("library_reservation.Models.ReservationRequest", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ReservationId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ReservationId")
-                        .IsUnique();
-
-                    b.ToTable("ReservationRequests");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -319,7 +317,7 @@ namespace library_reservation.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("library_reservation.Models.Reservation", b =>
+            modelBuilder.Entity("library_reservation.Models.ReservationModel", b =>
                 {
                     b.HasOne("library_reservation.Models.Hall", "Hall")
                         .WithMany("Reservations")
@@ -330,25 +328,9 @@ namespace library_reservation.Data.Migrations
                     b.Navigation("Hall");
                 });
 
-            modelBuilder.Entity("library_reservation.Models.ReservationRequest", b =>
-                {
-                    b.HasOne("library_reservation.Models.Reservation", "Reservation")
-                        .WithOne("ReservationRequest")
-                        .HasForeignKey("library_reservation.Models.ReservationRequest", "ReservationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Reservation");
-                });
-
             modelBuilder.Entity("library_reservation.Models.Hall", b =>
                 {
                     b.Navigation("Reservations");
-                });
-
-            modelBuilder.Entity("library_reservation.Models.Reservation", b =>
-                {
-                    b.Navigation("ReservationRequest");
                 });
 #pragma warning restore 612, 618
         }

@@ -18,15 +18,11 @@ namespace library_reservation.Data
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<Reservation>()
-                .HasOne(r => r.ReservationRequest)
-                .WithOne(r => r.Reservation)
-                .HasForeignKey<ReservationRequest>(rr => rr.ReservationId);
+            builder.Entity<ReservationModel>()
+                .HasOne(r => r.Hall);
         }
 
-        public virtual DbSet<Reservation> Reservations { get; set; }
-
-        public virtual DbSet<ReservationRequest> ReservationRequests { get; set; }
+        public virtual DbSet<ReservationModel> Reservations { get; set; }
 
         public virtual DbSet<Hall> Halls { get; set; }
     }
