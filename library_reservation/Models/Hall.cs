@@ -10,6 +10,6 @@ namespace library_reservation.Models
 
         public HallTypeEnum Type { get; set; }
 
-        public IEnumerable<Reservation> Reservations { get; set; }
+        public IEnumerable<ReservationModel> Reservations { get; set; }
     }
 }
