@@ -1,6 +1,6 @@
 namespace library_reservation.Models
 {
-    public enum EndTypEnum
+    public enum EndTypeEnum
     {
         None,
         Date,

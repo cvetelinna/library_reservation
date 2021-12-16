@@ -1,6 +1,8 @@
+
+
 namespace library_reservation.Models
 {
-    public enum ReccuringTypeEnum
+    public enum RecurringTypeEnum
     {
         Weekly,
         Monthly
