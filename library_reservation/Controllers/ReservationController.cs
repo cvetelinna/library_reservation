@@ -19,6 +19,16 @@ namespace library_reservation.Controllers
             _context = context;
         }
 
+        // POST: Reservation/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        public void CreateRecurring(
+            [Bind("Id,RecurrenceType,StartDate,EndType,EndCounter,EndDate,RecurrinMonths,RecurringDays")] 
+             RecurringSettings recurringSettings)
+        {
+            _context.Add(recurringSettings);
+        }
+
         // GET: Reservation
         public async Task<IActionResult> Index()
         {
@@ -48,24 +58,36 @@ namespace library_reservation.Controllers
         // GET: Reservation/Create
         public IActionResult Create()
         {
-            ViewData["HallId"] = new SelectList(_context.Halls, "Id", "Id");
+            ViewData["HallId"] = new SelectList(_context.Halls, "Id", "Name");
             return View();
         }
 
+        //[Bind("Id,RecurrenceType,StartDate,EndType,EndCounter,EndDate,RecurrinMonths,RecurringDays")] RecurringSettings recurringSettings
         // POST: Reservation/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,HallId,UserId,StartDate,EndDate,Subject,Organizers,Description,RequiresMultimedia")] ReservationModel reservationModel)
-        {
+        public async Task<IActionResult> Create(
+            [Bind("Id,HallId,UserId,StartDate,EndDate,Subject,Organizers,Description,RequiresMultimedia,RecurringSettingsId,IsRecurring")] ReservationModel reservationModel, 
+            [Bind("Id,RecurrenceType,RecurrenceStartDate,EndType,EndCounter,RecurrenceEndDate,RecurrinMonths,RecurringDays")] RecurringSettings recurrenceSettings)
+        { 
             if (ModelState.IsValid)
             {
+                
+                if (reservationModel.IsRecurring)
+                {
+                    _context.Add(recurrenceSettings);
+                    await _context.SaveChangesAsync();
+                    reservationModel.RecurringSettingsId = recurrenceSettings.Id;
+                }
+               
                 _context.Add(reservationModel);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["HallId"] = new SelectList(_context.Halls, "Id", "Id", reservationModel.HallId);
+            ViewData["HallId"] = new SelectList(_context.Halls, "Id", "Name", reservationModel.HallId);
             return View(reservationModel);
         }
 
