@@ -1,0 +1,209 @@
+@model library_reservation.Models.RecurringSettings
+<!--Modal-->
+<div class="modal fade" id="recurrenceModal" tabindex="-1" role="dialog" aria-labelledby="RecurrenceModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Recurrence Settings</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+
+            <div class="modal-body">
+
+                <div class="form-group">
+
+                    <div class="form-group">
+                        <label asp-for="RecurrenceType" class="control-label">Recurrence type</label>
+                        <select id="recurrenceTypeSelect" asp-for="RecurrenceType" class="form-control" asp-items="Html.GetEnumSelectList<RecurringTypeEnum>()"></select>
+                    </div>
+
+                    <div id="daysCheckboxes" class="form-group">
+                        <label asp-for="RecurringDays" class="control-label">Days to recurre</label>
+                        <input asp-for="RecurringDays" id="daysLabel" class="form-control" readonly />
+                        <br />
+
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="Monday">
+                            <label class="form-check-label" for="RecurringDays">Monday</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="Tuesday">
+                            <label class="form-check-label" for="RecurringDays">Tuesday</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="Wednesday">
+                            <label class="form-check-label" for="RecurringDays">Wednesday</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="Thursday">
+                            <label class="form-check-label" for="RecurringDays">Thursday</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="Friday">
+                            <label class="form-check-label" for="RecurringDays">Friday</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="Saturday">
+                            <label class="form-check-label" for="RecurringDays">Saturday</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="Sunday">
+                            <label class="form-check-label" for="RecurringDays">Sunday</label>
+                        </div>
+                    </div>
+
+                    <div id="monthsCheckboxes" class="form-group" style="display: none;">
+                        <label asp-for="RecurrinMonths" class="control-label">Months to recurre</label>
+                        <input asp-for="RecurrinMonths" id="monthsLabel" class="form-control" readonly />
+                        <br />
+
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="January">
+                            <label class="form-check-label" for="RecurrinMonths">January</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="February">
+                            <label class="form-check-label" for="RecurrinMonths">February</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="March">
+                            <label class="form-check-label" for="RecurrinMonths">March</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="April">
+                            <label class="form-check-label" for="RecurrinMonths">April</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="May">
+                            <label class="form-check-label" for="RecurrinMonths">May</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="June">
+                            <label class="form-check-label" for="RecurrinMonths">June</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="July">
+                            <label class="form-check-label" for="RecurrinMonths">July</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="August">
+                            <label class="form-check-label" for="RecurrinMonths">August</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="September">
+                            <label class="form-check-label" for="RecurrinMonths">September</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="October">
+                            <label class="form-check-label" for="RecurrinMonths">October</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="November">
+                            <label class="form-check-label" for="RecurrinMonths">November</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="December">
+                            <label class="form-check-label" for="RecurrinMonths">December</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="EndType" class="control-label">Recurrence end</label>
+                        <select id="endTypeSelect" asp-for="EndType" class="form-control" asp-items="Html.GetEnumSelectList<EndTypeEnum>()"></select>
+                    </div>
+
+                    <div id="endDateContainer" class="form-group" style="display: none;">
+                        <label asp-for="RecurrenceEndDate" class="control-label">End date</label>
+                        <input asp-for="RecurrenceEndDate" class="form-control" />
+                    </div>
+
+                    <div id="endCountContainer" class="form-group" style="display: none;">
+                        <label asp-for="EndCounter" class="control-label">Counter</label>
+                        <input asp-for="EndCounter" class="form-control" />
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <div class="form-group">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("#recurringCheck").on('change', function (e) {
+            if (e.target.checked) {
+                $('#recurrenceModal').modal();
+            }
+        });
+
+        $("#daysCheckboxes").click(function () {
+            var selectedCb = [];
+            $('div#daysCheckboxes input[type=checkbox]').each(function () {
+                if ($(this).is(":checked")) {
+                    selectedCb.push($(this).attr('value'));
+                }
+            });
+
+            $('#daysLabel').val(selectedCb);
+        });
+
+        $("#monthsCheckboxes").click(function () {
+            var selectedCb = [];
+            $('div#monthsCheckboxes input[type=checkbox]').each(function () {
+                if ($(this).is(":checked")) {
+                    selectedCb.push($(this).attr('value'));
+                }
+            });
+
+            $('#monthsLabel').val(selectedCb);
+        });
+
+        $("#recurrenceTypeSelect").click(function () {
+            var selected = $('#recurrenceTypeSelect').find(":selected").text();
+
+            switch (selected) {
+                case "Weekly":
+                    monthsCheckboxes.style.display = 'none';
+                    daysCheckboxes.style.display = 'inline-block';
+                    break;
+
+                case "Monthly":
+                    daysCheckboxes.style.display = 'none';
+                    monthsCheckboxes.style.display = 'inline-block';
+                    break;
+            }
+        });
+
+        $("#endTypeSelect").click(function () {
+            var selected = $('#endTypeSelect').find(":selected").text();
+
+            switch (selected) {
+                case "None":
+                    endCountContainer.style.display = 'none';
+                    endDateContainer.style.display = 'none';
+                    break;
+
+                case "Date":
+                    endCountContainer.style.display = 'none';
+                    endDateContainer.style.display = 'inline-block';
+                    break;
+
+                case "Count":
+                    endDateContainer.style.display = 'none';
+                    endCountContainer.style.display = 'inline-block';
+                    break;
+            }
+        });
+    });
+</script>
