@@ -1,4 +1,8 @@
-﻿using System;
+﻿using library_reservation.Models;
+
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace library_reservation.Models
 {
@@ -22,8 +26,31 @@ namespace library_reservation.Models
         
         public bool RequiresMultimedia { get; set; }
 
+        public bool IsRecurring { get; set; }
+
+        public int? RecurringSettingsId { get; set; }
+        public RecurringSettings RecurringSettings { get; set; }
+
         public virtual Hall Hall { get; set; }
 
-        //To Do add user entity when Identity is done
+    }
+
+    public class RecurringSettings
+    {
+        public int Id { get; set; }
+
+        [EnumDataType(typeof(RecurringTypeEnum))]
+        public RecurringTypeEnum RecurrenceType { get; set; }
+
+        public string RecurringDays { get; set; }
+
+        public string RecurrinMonths { get; set; }
+
+        [EnumDataType(typeof(EndTypeEnum))]
+        public EndTypeEnum EndType { get; set; }
+
+        public int? EndCounter { get; set; }
+
+        public DateTime? RecurrenceEndDate { get; set; }
     }
 }
