@@ -55,9 +55,11 @@
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" asp-for="IsRecurring" id="recurringCheck">
                 <label class="form-check-label" asp-for="IsRecurring">
-                    Set Recurrence
+                    Event Recurrence
                 </label>
             </div>
+
+            <br />
 
             @await Html.PartialAsync("_RecurringModal")
 
