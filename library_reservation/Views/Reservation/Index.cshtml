@@ -35,6 +35,9 @@
                 @Html.DisplayNameFor(model => model.RequiresMultimedia)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.IsRecurring)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Hall)
             </th>
             <th></th>
@@ -65,7 +68,10 @@
                 @Html.DisplayFor(modelItem => item.RequiresMultimedia)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Hall.Id)
+                @Html.DisplayFor(modelItem => item.IsRecurring)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Hall.Name)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

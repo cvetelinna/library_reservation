@@ -229,6 +229,35 @@ namespace library_reservation.Data.Migrations
                     b.ToTable("Halls");
                 });
 
+            modelBuilder.Entity("library_reservation.Models.RecurringSettings", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("EndCounter")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("EndType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("RecurrenceEndDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("RecurrenceType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("RecurrinMonths")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RecurringDays")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RecurringSettings");
+                });
+
             modelBuilder.Entity("library_reservation.Models.ReservationModel", b =>
                 {
                     b.Property<int>("Id")
@@ -244,8 +273,14 @@ namespace library_reservation.Data.Migrations
                     b.Property<int>("HallId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("IsRecurring")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Organizers")
                         .HasColumnType("TEXT");
+
+                    b.Property<int?>("RecurringSettingsId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("RequiresMultimedia")
                         .HasColumnType("INTEGER");
@@ -262,6 +297,8 @@ namespace library_reservation.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("HallId");
+
+                    b.HasIndex("RecurringSettingsId");
 
                     b.ToTable("Reservations");
                 });
@@ -325,7 +362,13 @@ namespace library_reservation.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("library_reservation.Models.RecurringSettings", "RecurringSettings")
+                        .WithMany()
+                        .HasForeignKey("RecurringSettingsId");
+
                     b.Navigation("Hall");
+
+                    b.Navigation("RecurringSettings");
                 });
 
             modelBuilder.Entity("library_reservation.Models.Hall", b =>

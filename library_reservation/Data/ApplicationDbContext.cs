@@ -24,6 +24,8 @@ namespace library_reservation.Data
 
         public virtual DbSet<ReservationModel> Reservations { get; set; }
 
+        public virtual DbSet<RecurringSettings> RecurringSettings { get; set; }
+
         public virtual DbSet<Hall> Halls { get; set; }
     }
 }
