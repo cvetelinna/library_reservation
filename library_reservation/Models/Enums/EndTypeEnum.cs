@@ -4,6 +4,6 @@ namespace library_reservation.Models
     {
         None = 1,
         Date = 2,
-        Count = 3
+        Counter = 3
     }
 }
