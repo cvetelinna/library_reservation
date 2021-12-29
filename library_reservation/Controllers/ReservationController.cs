@@ -19,16 +19,6 @@ namespace library_reservation.Controllers
             _context = context;
         }
 
-        // POST: Reservation/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        public void CreateRecurring(
-            [Bind("Id,RecurrenceType,StartDate,EndType,EndCounter,EndDate,RecurrinMonths,RecurringDays")] 
-             RecurringSettings recurringSettings)
-        {
-            _context.Add(recurringSettings);
-        }
-
         // GET: Reservation
         public async Task<IActionResult> Index()
         {
@@ -46,6 +36,8 @@ namespace library_reservation.Controllers
 
             var reservationModel = await _context.Reservations
                 .Include(r => r.Hall)
+                .Include(r => r.RecurringSettings
+                )
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (reservationModel == null)
             {
@@ -104,7 +96,8 @@ namespace library_reservation.Controllers
             {
                 return NotFound();
             }
-            ViewData["HallId"] = new SelectList(_context.Halls, "Id", "Id", reservationModel.HallId);
+
+            ViewData["HallId"] = new SelectList(_context.Halls, "Id", "Name", reservationModel.HallId);
             return View(reservationModel);
         }
 
@@ -154,6 +147,7 @@ namespace library_reservation.Controllers
 
             var reservationModel = await _context.Reservations
                 .Include(r => r.Hall)
+                .Include(r => r.RecurringSettings)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (reservationModel == null)
             {
@@ -169,6 +163,13 @@ namespace library_reservation.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var reservationModel = await _context.Reservations.FindAsync(id);
+            
+            if (reservationModel.IsRecurring)
+            {
+                var recurringSettings = await _context.RecurringSettings.FindAsync(reservationModel.RecurringSettingsId);
+                _context.RecurringSettings.Remove(recurringSettings);
+            }
+
             _context.Reservations.Remove(reservationModel);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

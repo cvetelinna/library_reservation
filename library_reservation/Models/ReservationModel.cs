@@ -29,8 +29,8 @@ namespace library_reservation.Models
         public bool IsRecurring { get; set; }
 
         public int? RecurringSettingsId { get; set; }
-        public RecurringSettings RecurringSettings { get; set; }
 
+        public virtual RecurringSettings RecurringSettings { get; set; }
         public virtual Hall Hall { get; set; }
 
     }
@@ -39,14 +39,12 @@ namespace library_reservation.Models
     {
         public int Id { get; set; }
 
-        [EnumDataType(typeof(RecurringTypeEnum))]
         public RecurringTypeEnum RecurrenceType { get; set; }
 
         public string RecurringDays { get; set; }
 
         public string RecurrinMonths { get; set; }
 
-        [EnumDataType(typeof(EndTypeEnum))]
         public EndTypeEnum EndType { get; set; }
 
         public int? EndCounter { get; set; }
