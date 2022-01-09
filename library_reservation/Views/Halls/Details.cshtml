@@ -1,4 +1,6 @@
-﻿@model library_reservation.Models.Hall
+﻿@using System.Globalization
+@using Newtonsoft.Json
+@model library_reservation.Models.Hall
 
 @{
     ViewData["Title"] = "Details";
@@ -8,8 +10,8 @@
 <h1>Details</h1>
 
 <div>
-    <h4>Hall</h4>
     <hr />
+
     <dl class="row">
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Name)
@@ -23,9 +25,65 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Type)
         </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Reservations)
+        </dt>
+        <dd class = "col-sm-10">
+            @foreach(var res in Model.Reservations)
+            {
+                <div>@res.Organizers</div>
+            }
+        </dd>
     </dl>
 </div>
+<div id="calendar"></div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
+<script type="text/javascript">
+document.addEventListener("DOMContentLoaded", () => {
+        let calendarEl = document.getElementById("calendar");
+        let daysMap = {
+            "Sunday": 0,
+            "Monday": 1,
+            "Tuesday": 2,
+            "Wednesday": 3,
+            "Thursday": 4,
+            "Friday": 5,
+            "Saturday": 6     
+        }
+        
+        let reservations = @Json.Serialize(Model.Reservations);
+        const events = reservations.map(r => {
+            let res = {};
+              
+            if (r.isRecurring) {
+                let recurringDays = r.recurringSettings.recurringDays.split(",")  
+                let mappedRecurringDays = recurringDays.map(d => daysMap[d])   
+                res = {
+                    ...res,
+                    daysOfWeek: mappedRecurringDays,
+                    startRecur: r.startDate,
+                    endRecur: r.recurringSettings.recurrenceEndDate, 
+                }
+            }
+            
+            res = {
+                ...res,
+                id: r.id,
+                title: r.subject,
+                start: r.startDate,
+                end: r.endDate
+            }
+            return res;
+        })
+        
+        
+        let calendar = new FullCalendar.Calendar(calendarEl, {
+             initialView: 'dayGridMonth',
+             events: events,
+        });
+        calendar.render();
+})
+</script>

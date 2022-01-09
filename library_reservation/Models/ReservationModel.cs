@@ -32,7 +32,6 @@ namespace library_reservation.Models
 
         public virtual RecurringSettings RecurringSettings { get; set; }
         public virtual Hall Hall { get; set; }
-
     }
 
     public class RecurringSettings
@@ -50,5 +49,9 @@ namespace library_reservation.Models
         public int? EndCounter { get; set; }
 
         public DateTime? RecurrenceEndDate { get; set; }
+        
+        public int ReservationId { get; set; }
+        
+        public ReservationModel Reservation { get; set; }
     }
 }

@@ -19,7 +19,13 @@ namespace library_reservation.Data
             base.OnModelCreating(builder);
 
             builder.Entity<ReservationModel>()
-                .HasOne(r => r.Hall);
+                .HasOne(r => r.Hall)
+                .WithMany(h => h.Reservations);
+
+            builder.Entity<ReservationModel>()
+                .HasOne(r => r.RecurringSettings)
+                .WithOne(rs => rs.Reservation)
+                .HasForeignKey<ReservationModel>(r => r.RecurringSettingsId);
         }
 
         public virtual DbSet<ReservationModel> Reservations { get; set; }

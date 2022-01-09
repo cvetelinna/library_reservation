@@ -35,10 +35,27 @@ namespace library_reservation.Controllers
 
             var hall = await _context.Halls
                 .FirstOrDefaultAsync(m => m.Id == id);
+
+            var reservations = await _context.Reservations
+                .Where(r => r.HallId == id)
+                .Include(r => r.RecurringSettings)
+                .ToListAsync();
+
+            foreach (var reservation in reservations)
+            {
+                reservation.Hall = null;
+                if (reservation.RecurringSettings != null)
+                {
+                    reservation.RecurringSettings.Reservation = null;
+                }
+            }
+            
             if (hall == null)
             {
                 return NotFound();
             }
+
+            hall.Reservations = reservations;
 
             return View(hall);
         }
