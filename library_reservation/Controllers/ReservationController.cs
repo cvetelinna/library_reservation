@@ -63,22 +63,30 @@ namespace library_reservation.Controllers
         public async Task<IActionResult> Create(
             [Bind("Id,HallId,UserId,StartDate,EndDate,Subject,Organizers,Description,RequiresMultimedia,RecurringSettingsId,IsRecurring")] ReservationModel reservationModel, 
             [Bind("Id,RecurrenceType,RecurrenceStartDate,EndType,EndCounter,RecurrenceEndDate,RecurrinMonths,RecurringDays")] RecurringSettings recurrenceSettings)
-        { 
+        {
+            int result = DateTime.Compare(reservationModel.StartDate, reservationModel.EndDate);
+
             if (ModelState.IsValid)
             {
-                
+
                 if (reservationModel.IsRecurring)
                 {
                     _context.Add(recurrenceSettings);
                     await _context.SaveChangesAsync();
                     reservationModel.RecurringSettingsId = recurrenceSettings.Id;
                 }
-               
+
                 _context.Add(reservationModel);
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));
             }
+
+            if (result > 0)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             ViewData["HallId"] = new SelectList(_context.Halls, "Id", "Name", reservationModel.HallId);
             return View(reservationModel);
         }
