@@ -64,33 +64,38 @@ namespace library_reservation.Controllers
             [Bind("Id,HallId,UserId,StartDate,EndDate,Subject,Organizers,Description,RequiresMultimedia,RecurringSettingsId,IsRecurring")] ReservationModel reservationModel, 
             [Bind("Id,RecurrenceType,RecurrenceStartDate,EndType,EndCounter,RecurrenceEndDate,RecurrinMonths,RecurringDays")] RecurringSettings recurrenceSettings)
         {
-            var kur = recurrenceSettings.Reservation.StartDate;
-            var kur2 = recurrenceSettings.Reservation.EndDate;
-            int result = DateTime.Compare(kur, kur2);
+            if (reservationModel.IsRecurring)
+            {
+                if (recurrenceSettings.RecurrenceEndDate != null)
+                {
+                    var compare = DateTime.Compare(reservationModel.StartDate, (DateTime) recurrenceSettings.RecurrenceEndDate);
+                    if (compare > 0)
+                    {
+                        ModelState.AddModelError("RecurrenceEndDate", "End date should be after the initial event start date");
+                    }
+                }
+                
+                reservationModel.RecurringSettings = recurrenceSettings;
+            }
+
+            var start = reservationModel.StartDate;
+            var end = reservationModel.EndDate;
+            var result = DateTime.Compare(start, end);
             if (result > 0)
             {
-                ModelState.AddModelError("Start Date", "Start Date Should be before end date");
-               // return View(reservationModel);
+                ModelState.AddModelError("StartDate", "Start date should be before the end date");
             }
-
-            if (ModelState.IsValid)
+            
+            if (!ModelState.IsValid)
             {
-               
-                if (reservationModel.IsRecurring)
-                {
-                    _context.Add(recurrenceSettings);
-                    await _context.SaveChangesAsync();
-                    reservationModel.RecurringSettingsId = recurrenceSettings.Id;
-                }
-
-                _context.Add(reservationModel);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Index));
+                ViewData["HallId"] = new SelectList(_context.Halls, "Id", "Name", reservationModel.HallId);
+                return View();
             }
 
-            ViewData["HallId"] = new SelectList(_context.Halls, "Id", "Name", reservationModel.HallId);
-            return View(reservationModel);
+            _context.Add(reservationModel);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Reservation/Edit/5
@@ -123,28 +128,15 @@ namespace library_reservation.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(reservationModel);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ReservationModelExists(reservationModel.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                ViewData["HallId"] = new SelectList(_context.Halls, "Id", "Id", reservationModel.HallId);
+                return View(reservationModel);
             }
-            ViewData["HallId"] = new SelectList(_context.Halls, "Id", "Id", reservationModel.HallId);
-            return View(reservationModel);
+
+            _context.Update(reservationModel);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Reservation/Delete/5

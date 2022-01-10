@@ -20,12 +20,15 @@ namespace library_reservation.Data
 
             builder.Entity<ReservationModel>()
                 .HasOne(r => r.Hall)
-                .WithMany(h => h.Reservations);
+                .WithMany(h => h.Reservations)
+                .HasForeignKey(r => r.HallId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             builder.Entity<ReservationModel>()
                 .HasOne(r => r.RecurringSettings)
                 .WithOne(rs => rs.Reservation)
-                .HasForeignKey<ReservationModel>(r => r.RecurringSettingsId);
+                .HasForeignKey<ReservationModel>(r => r.RecurringSettingsId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
         public virtual DbSet<ReservationModel> Reservations { get; set; }

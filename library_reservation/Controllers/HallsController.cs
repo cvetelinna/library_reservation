@@ -73,13 +73,13 @@ namespace library_reservation.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Type")] Hall hall)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Add(hall);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return View(hall);
             }
-            return View(hall);
+            _context.Add(hall);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Halls/Edit/5
@@ -110,27 +110,15 @@ namespace library_reservation.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(hall);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!HallExists(hall.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return View(hall);
             }
-            return View(hall);
+            
+            _context.Update(hall);
+            await _context.SaveChangesAsync();
+            
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Halls/Delete/5
