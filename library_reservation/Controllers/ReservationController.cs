@@ -64,11 +64,18 @@ namespace library_reservation.Controllers
             [Bind("Id,HallId,UserId,StartDate,EndDate,Subject,Organizers,Description,RequiresMultimedia,RecurringSettingsId,IsRecurring")] ReservationModel reservationModel, 
             [Bind("Id,RecurrenceType,RecurrenceStartDate,EndType,EndCounter,RecurrenceEndDate,RecurrinMonths,RecurringDays")] RecurringSettings recurrenceSettings)
         {
-            int result = DateTime.Compare(reservationModel.StartDate, reservationModel.EndDate);
+            var kur = recurrenceSettings.Reservation.StartDate;
+            var kur2 = recurrenceSettings.Reservation.EndDate;
+            int result = DateTime.Compare(kur, kur2);
+            if (result > 0)
+            {
+                ModelState.AddModelError("Start Date", "Start Date Should be before end date");
+               // return View(reservationModel);
+            }
 
             if (ModelState.IsValid)
             {
-
+               
                 if (reservationModel.IsRecurring)
                 {
                     _context.Add(recurrenceSettings);
@@ -79,11 +86,6 @@ namespace library_reservation.Controllers
                 _context.Add(reservationModel);
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction(nameof(Index));
-            }
-
-            if (result > 0)
-            {
                 return RedirectToAction(nameof(Index));
             }
 
