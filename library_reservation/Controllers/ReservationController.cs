@@ -85,6 +85,17 @@ namespace library_reservation.Controllers
             {
                 ModelState.AddModelError("StartDate", "Start date should be before the end date");
             }
+
+            var overlappingReservation = _context.Reservations
+                .Where(r => r.HallId == reservationModel.HallId)
+                .Any(r =>
+                    reservationModel.StartDate < r.EndDate &&
+                    reservationModel.EndDate > r.StartDate);
+
+            if (overlappingReservation)
+            {
+                ModelState.AddModelError("StartDate", "Reservation overlaps with existing event");
+            }
             
             if (!ModelState.IsValid)
             {

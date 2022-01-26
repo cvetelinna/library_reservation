@@ -73,6 +73,7 @@ namespace library_reservation.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Type")] Hall hall)
         {
+
             if (!ModelState.IsValid)
             {
                 return View(hall);
