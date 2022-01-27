@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using System.Security.Claims
 @model IEnumerable<library_reservation.Models.ReservationModel>
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
@@ -16,9 +17,6 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.UserId)
-            </th>
             <th>
                 @Html.DisplayNameFor(model => model.StartDate)
             </th>
@@ -50,9 +48,6 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.UserId)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.StartDate)
             </td>
             <td>
@@ -78,7 +73,7 @@
             </td>
             <td>
                 @{
-                    if (User.IsInRole("Admin"))
+                    if (User.IsInRole("Admin") || item.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
                     {
                         <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
                         <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
