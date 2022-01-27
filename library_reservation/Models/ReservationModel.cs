@@ -10,6 +10,7 @@ namespace library_reservation.Models
     {
         public int Id { get; set; }
 
+        [Display(Name = "Hall")]
         public int HallId { get; set; }
 
         public string UserId { get; set; }
