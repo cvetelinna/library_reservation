@@ -12,7 +12,7 @@ namespace library_reservation.Models
 
         public int HallId { get; set; }
 
-        public int UserId { get; set; }
+        public string UserId { get; set; }
 
         [Required]
         [Display(Name = "Start Date")]
@@ -29,7 +29,6 @@ namespace library_reservation.Models
         [Required]
         [StringLength(30, ErrorMessage = "Name length can't be more than 30.")]
         public string Organizers { get; set; }
-
 
         [StringLength(250, ErrorMessage = "Description should be less than 250 symbols")]
         public string Description { get; set; }
