@@ -23,13 +23,21 @@ namespace library_reservation.Controllers
 
         // GET: Reservation
         [Authorize]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index([FromQuery]string searchQuery)
         {
             if (User.IsInRole("Admin"))
             {
                 var reservations = await _context.Reservations
                     .Include(r => r.Hall)
                     .ToListAsync();
+
+                if (!string.IsNullOrEmpty(searchQuery))
+                {
+                    reservations = reservations
+                        .Where(r => 
+                            r.Subject.Normalize().Contains(searchQuery.Normalize()))
+                        .ToList();
+                }
                 return View(reservations);
             }
 
@@ -38,6 +46,7 @@ namespace library_reservation.Controllers
                 .Include(r => r.Hall)
                 .Where(r => r.UserId == userId)
                 .ToListAsync();
+
             return View(userReservations);
         }
 

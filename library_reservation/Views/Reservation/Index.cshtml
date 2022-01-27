@@ -14,6 +14,20 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+
+<form asp-controller="Reservation" asp-action="Index" method="get">
+    <div class="input-group mb-3">
+        <input
+            name="searchQuery"
+            type="text" 
+            class="form-control" 
+            placeholder="Search by subject" 
+            aria-label="Search by subject" aria-describedby="button-addon2">
+        <button class="btn btn-outline-secondary" type="submit" id="button-addon2" value="Filter">
+            Search
+        </button>
+    </div>
+</form>
 <table class="table">
     <thead>
         <tr>
@@ -72,15 +86,13 @@
                 @Html.DisplayFor(modelItem => item.Hall.Name)
             </td>
             <td>
-                @{
-                    if (User.IsInRole("Admin") || item.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
-                    {
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                    }
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
-                }
-                </td>
+                @if (User.IsInRole("Admin"))
+                 {
+                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                     <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                 }
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+            </td>
         </tr>
 }
     </tbody>
