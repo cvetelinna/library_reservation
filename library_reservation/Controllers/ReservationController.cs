@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -22,11 +22,23 @@ namespace library_reservation.Controllers
         }
 
         // GET: Reservation
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Reservations.Include(r => r.Hall);
-            return View(await applicationDbContext.ToListAsync());
+            if (User.IsInRole("Admin"))
+            {
+                var reservations = await _context.Reservations
+                    .Include(r => r.Hall)
+                    .ToListAsync();
+                return View(reservations);
+            }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userReservations = await _context.Reservations
+                .Include(r => r.Hall)
+                .Where(r => r.UserId == userId)
+                .ToListAsync();
+            return View(userReservations);
         }
 
         // GET: Reservation/Details/5
