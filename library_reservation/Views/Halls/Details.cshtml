@@ -36,11 +36,14 @@
         </dd>
     </dl>
 </div>
-<div id="calendar"></div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+    }
     <a asp-action="Index">Back to List</a>
 </div>
+<div id="calendar"></div>
 <script type="text/javascript">
 document.addEventListener("DOMContentLoaded", () => {
         let calendarEl = document.getElementById("calendar");

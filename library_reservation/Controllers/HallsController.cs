@@ -21,14 +21,14 @@ namespace library_reservation.Controllers
         }
 
         // GET: Halls
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Halls.ToListAsync());
         }
 
         // GET: Halls/Details/5
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -43,7 +43,8 @@ namespace library_reservation.Controllers
                 .Where(r => r.HallId == id)
                 .Include(r => r.RecurringSettings)
                 .ToListAsync();
-
+            
+            // prevent cyclical data - default from cache from route
             foreach (var reservation in reservations)
             {
                 reservation.Hall = null;
@@ -89,6 +90,7 @@ namespace library_reservation.Controllers
         }
 
         // GET: Halls/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
