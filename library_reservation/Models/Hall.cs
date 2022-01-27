@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace library_reservation.Models
 {
@@ -6,6 +7,8 @@ namespace library_reservation.Models
     {
         public int Id { get; set; }
 
+        [Required]
+        [StringLength(20, ErrorMessage = "Name length can't be more than 20.")]
         public string Name { get; set; }
 
         public HallTypeEnum Type { get; set; }

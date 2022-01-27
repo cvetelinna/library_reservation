@@ -63,24 +63,50 @@ namespace library_reservation.Controllers
         public async Task<IActionResult> Create(
             [Bind("Id,HallId,UserId,StartDate,EndDate,Subject,Organizers,Description,RequiresMultimedia,RecurringSettingsId,IsRecurring")] ReservationModel reservationModel, 
             [Bind("Id,RecurrenceType,RecurrenceStartDate,EndType,EndCounter,RecurrenceEndDate,RecurrinMonths,RecurringDays")] RecurringSettings recurrenceSettings)
-        { 
-            if (ModelState.IsValid)
+        {
+            if (reservationModel.IsRecurring)
             {
-                
-                if (reservationModel.IsRecurring)
+                if (recurrenceSettings.RecurrenceEndDate != null)
                 {
-                    _context.Add(recurrenceSettings);
-                    await _context.SaveChangesAsync();
-                    reservationModel.RecurringSettingsId = recurrenceSettings.Id;
+                    var compare = DateTime.Compare(reservationModel.StartDate, (DateTime) recurrenceSettings.RecurrenceEndDate);
+                    if (compare > 0)
+                    {
+                        ModelState.AddModelError("RecurrenceEndDate", "End date should be after the initial event start date");
+                    }
                 }
-               
-                _context.Add(reservationModel);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Index));
+                
+                reservationModel.RecurringSettings = recurrenceSettings;
             }
-            ViewData["HallId"] = new SelectList(_context.Halls, "Id", "Name", reservationModel.HallId);
-            return View(reservationModel);
+
+            var start = reservationModel.StartDate;
+            var end = reservationModel.EndDate;
+            var result = DateTime.Compare(start, end);
+            if (result > 0)
+            {
+                ModelState.AddModelError("StartDate", "Start date should be before the end date");
+            }
+
+            var overlappingReservation = _context.Reservations
+                .Where(r => r.HallId == reservationModel.HallId)
+                .Any(r =>
+                    reservationModel.StartDate < r.EndDate &&
+                    reservationModel.EndDate > r.StartDate);
+
+            if (overlappingReservation)
+            {
+                ModelState.AddModelError("StartDate", "Reservation overlaps with existing event");
+            }
+            
+            if (!ModelState.IsValid)
+            {
+                ViewData["HallId"] = new SelectList(_context.Halls, "Id", "Name", reservationModel.HallId);
+                return View();
+            }
+
+            _context.Add(reservationModel);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Reservation/Edit/5
@@ -113,28 +139,15 @@ namespace library_reservation.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(reservationModel);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ReservationModelExists(reservationModel.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                ViewData["HallId"] = new SelectList(_context.Halls, "Id", "Id", reservationModel.HallId);
+                return View(reservationModel);
             }
-            ViewData["HallId"] = new SelectList(_context.Halls, "Id", "Id", reservationModel.HallId);
-            return View(reservationModel);
+
+            _context.Update(reservationModel);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Reservation/Delete/5

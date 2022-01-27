@@ -1,4 +1,4 @@
-﻿using library_reservation.Models;
+﻿    using library_reservation.Models;
 
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -14,14 +14,26 @@ namespace library_reservation.Models
 
         public int UserId { get; set; }
 
+        [Required]
+        [Display(Name = "Start Date")]
+        [DataType(DataType.Date)]
         public DateTime StartDate { get; set; }
 
+        [Required]
+        [Display(Name = "End Date")]
+        [DataType(DataType.Date)]
         public DateTime EndDate { get; set; }
 
+        [Required]
+        [StringLength(15, ErrorMessage = "Name length can't be more than 15.")]
         public string Subject { get; set; }
 
+        [Required]
+        [StringLength(30, ErrorMessage = "Name length can't be more than 30.")]
         public string Organizers { get; set; }
 
+
+        [StringLength(250, ErrorMessage = "Description should be less than 250 symbols")]
         public string Description { get; set; }
         
         public bool RequiresMultimedia { get; set; }
