@@ -219,6 +219,7 @@ namespace library_reservation.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
+                        .HasMaxLength(20)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Type")
@@ -268,6 +269,7 @@ namespace library_reservation.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
+                        .HasMaxLength(250)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("EndDate")
@@ -280,6 +282,8 @@ namespace library_reservation.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Organizers")
+                        .IsRequired()
+                        .HasMaxLength(30)
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("RecurringSettingsId")
@@ -292,10 +296,12 @@ namespace library_reservation.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasMaxLength(15)
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("UserId")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -363,12 +369,13 @@ namespace library_reservation.Data.Migrations
                     b.HasOne("library_reservation.Models.Hall", "Hall")
                         .WithMany("Reservations")
                         .HasForeignKey("HallId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("library_reservation.Models.RecurringSettings", "RecurringSettings")
                         .WithOne("Reservation")
-                        .HasForeignKey("library_reservation.Models.ReservationModel", "RecurringSettingsId");
+                        .HasForeignKey("library_reservation.Models.ReservationModel", "RecurringSettingsId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Hall");
 

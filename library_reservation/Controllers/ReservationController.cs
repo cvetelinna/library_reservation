@@ -1,12 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using library_reservation.Data;
 using library_reservation.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace library_reservation.Controllers
 {
@@ -20,13 +22,36 @@ namespace library_reservation.Controllers
         }
 
         // GET: Reservation
-        public async Task<IActionResult> Index()
+        [Authorize]
+        public async Task<IActionResult> Index([FromQuery]string searchQuery)
         {
-            var applicationDbContext = _context.Reservations.Include(r => r.Hall);
-            return View(await applicationDbContext.ToListAsync());
+            if (User.IsInRole("Admin"))
+            {
+                var reservations = await _context.Reservations
+                    .Include(r => r.Hall)
+                    .ToListAsync();
+
+                if (!string.IsNullOrEmpty(searchQuery))
+                {
+                    reservations = reservations
+                        .Where(r => 
+                            r.Subject.Normalize().Contains(searchQuery.Normalize()))
+                        .ToList();
+                }
+                return View(reservations);
+            }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userReservations = await _context.Reservations
+                .Include(r => r.Hall)
+                .Where(r => r.UserId == userId)
+                .ToListAsync();
+
+            return View(userReservations);
         }
 
         // GET: Reservation/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -48,6 +73,7 @@ namespace library_reservation.Controllers
         }
 
         // GET: Reservation/Create
+        [Authorize]
         public IActionResult Create()
         {
             ViewData["HallId"] = new SelectList(_context.Halls, "Id", "Name");
@@ -60,6 +86,7 @@ namespace library_reservation.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create(
             [Bind("Id,HallId,UserId,StartDate,EndDate,Subject,Organizers,Description,RequiresMultimedia,RecurringSettingsId,IsRecurring")] ReservationModel reservationModel, 
             [Bind("Id,RecurrenceType,RecurrenceStartDate,EndType,EndCounter,RecurrenceEndDate,RecurrinMonths,RecurringDays")] RecurringSettings recurrenceSettings)
@@ -97,11 +124,23 @@ namespace library_reservation.Controllers
                 ModelState.AddModelError("StartDate", "Reservation overlaps with existing event");
             }
             
+            var overlappingReservations = _context.Reservations
+                .Where(r => r.HallId == reservationModel.HallId)
+                .Any(r => 
+                    reservationModel.StartDate < r.EndDate && 
+                    reservationModel.EndDate > r.StartDate);
+            if (overlappingReservations)
+            {
+                ModelState.AddModelError("StartDate", "Reservation overlaps with existing event");
+            }
+            
             if (!ModelState.IsValid)
             {
                 ViewData["HallId"] = new SelectList(_context.Halls, "Id", "Name", reservationModel.HallId);
                 return View();
             }
+
+            reservationModel.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             _context.Add(reservationModel);
             await _context.SaveChangesAsync();
@@ -110,6 +149,7 @@ namespace library_reservation.Controllers
         }
 
         // GET: Reservation/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -132,6 +172,7 @@ namespace library_reservation.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,HallId,UserId,StartDate,EndDate,Subject,Organizers,Description,RequiresMultimedia")] ReservationModel reservationModel)
         {
             if (id != reservationModel.Id)
@@ -151,6 +192,7 @@ namespace library_reservation.Controllers
         }
 
         // GET: Reservation/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -173,6 +215,7 @@ namespace library_reservation.Controllers
         // POST: Reservation/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var reservationModel = await _context.Reservations.FindAsync(id);
